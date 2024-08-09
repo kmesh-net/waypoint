@@ -103,17 +103,19 @@ ReadOrParseState KmeshTlvFilter::parseBuffer(Network::ListenerFilterBuffer& buff
       int len;
 
       if (content_length_ == TLV_TYPE_SERVICE_ADDRESS_IPV4_LEN) {
-        addr.ss_family = AF_INET;
         len = sizeof(struct sockaddr_in);
         auto in4 = reinterpret_cast<struct sockaddr_in*>(&addr);
+        std::memset(in4, 0, len);
+        addr.ss_family = AF_INET;
         std::memcpy(&in4->sin_addr, buf + index_, 4);
         uint16_t port = 0;
         std::memcpy(&port, buf + index_ + 4, 2);
         in4->sin_port = port;
       } else {
-        addr.ss_family = AF_INET6;
         len = sizeof(struct sockaddr_in6);
         auto in6 = reinterpret_cast<struct sockaddr_in6*>(&addr);
+        std::memset(in6, 0, len);
+        addr.ss_family = AF_INET6;
         std::memcpy(&in6->sin6_addr, buf + index_, 16);
         uint16_t port = 0;
         std::memcpy(&port, buf + index_ + 16, 2);
